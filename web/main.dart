@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:html';
 import 'package:domino/domino.dart';
+import 'package:domino/html_view.dart';
 import 'package:domino/node_helpers.dart';
 import 'package:domino_dml/domino_dml.dart';
+
+import 'package:xml/xml.dart';
 
 class TodoItem implements Component, ConfigurableComponent {
   String task;
@@ -12,7 +16,8 @@ class TodoItem implements Component, ConfigurableComponent {
 
   @override
   void setProperty(String name, value) {
-    if (name == 'task') task = value;
+    if (name == 'task')
+      task = value;
     else if (name == 'onClick') onClick.listen(value);
   }
 
@@ -24,28 +29,21 @@ class TodoItem implements Component, ConfigurableComponent {
   @override
   dynamic build(BuildContext context) =>
       div(content: task, events: {'click': (_) => _click.add(null)});
-
-  @override
-  Stream getEvent(String event) {
-    return null;
-  }
 }
 
 String getTask() => 'Laundry';
 
 void main() {
-  dml('''
-  <TodoItem [task]="task" (click)="todoItemClick"></TodoItem>
+  final c = dml('''
+  <TodoItem task="{{task}}" onClick="{{todoItemClick}}"></TodoItem>
   ''')
     ..bindings = {
-      'task': getTask(),
-    }
-    ..events = {
-      'todoItemClick': (_) => print('TodoItem clicked!'),
+      '{{task}}': getTask(),
+      '{{todoItemClick}}': (_) => print('TodoItem clicked!'),
     }
     ..components = {
       'TodoItem': () => new TodoItem(),
     };
 
-  // TODO querySelector('#output').text = 'Your Dart app is running.';
+  registerHtmlView(querySelector('#output'), c);
 }
