@@ -13,6 +13,7 @@ class TodoItem implements Component, ConfigurableComponent {
   @override
   void setProperty(String name, value) {
     if (name == 'task') task = value;
+    else if (name == 'onClick') onClick.listen(value);
   }
 
   @override
@@ -26,7 +27,6 @@ class TodoItem implements Component, ConfigurableComponent {
 
   @override
   Stream getEvent(String event) {
-    if(event == 'onClick') return onClick;
     return null;
   }
 }
@@ -42,9 +42,10 @@ void main() {
     }
     ..events = {
       'todoItemClick': (_) => print('TodoItem clicked!'),
-    }..components = {
-
-  };
+    }
+    ..components = {
+      'TodoItem': () => new TodoItem(),
+    };
 
   // TODO querySelector('#output').text = 'Your Dart app is running.';
 }

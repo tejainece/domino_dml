@@ -6,15 +6,32 @@ abstract class ConfigurableComponent {
   void setProperty(String name, value);
 
   getProperty(String name);
-
-  Stream getEvent(String event);
 }
 
 class DmlTemplate implements Component {
   @override
   dynamic build(_) {
     XmlDocument doc = parse(template);
+    doc.children.forEach(())
     // TODO
+  }
+
+  List _construct(XmlElement spec) {
+    List ret = [];
+
+    for(XmlElement ch in spec.children) {
+      if(!components.containsKey(ch.name)) continue;
+
+      dynamic temp = components[ch.name];
+      if(temp is Function) temp = temp();
+
+      if(temp is ConfigurableComponent) {
+        for(XmlAttribute attribute in ch.attributes) {
+
+        }
+      }
+    }
+
   }
 
   DmlTemplate(this.template);
@@ -25,7 +42,7 @@ class DmlTemplate implements Component {
 
   Map<String, dynamic> events;
 
-  dynamic components;
+  Map<String, dynamic> components;
 }
 
 DmlTemplate dml(String template) => new DmlTemplate(template);
